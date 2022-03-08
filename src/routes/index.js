@@ -34,7 +34,7 @@ const {
   getUserTransaction,
   updateTransaction,
   deleteTransaction,
-} = require("../controllers/transaction");
+} = require("../controllers/transaction"); // addTransaction
 
 router.post("/login", login);
 router.post("/register", register);
