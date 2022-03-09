@@ -38,7 +38,7 @@ exports.register = async (req, res) => {
       fullname: req.body.fullname,
       email: req.body.email,
       password: hashedPassword,
-      role: "Customer",
+      role: "Administrator",
     });
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_PRIVATE_KEY);
@@ -84,11 +84,11 @@ exports.login = async (req, res) => {
       },
     });
     if (!userExist) {
-			return res.status(400).json({
-				status: 'failed',
-				message: 'Your email or password is invalid',
-			});
-		}
+      return res.status(400).json({
+        status: "failed",
+        message: "Your email or password is invalid",
+      });
+    }
     const isValid = await bcrypt.compare(req.body.password, userExist.password);
     if (!isValid) {
       return res.status(400).send({
@@ -96,20 +96,20 @@ exports.login = async (req, res) => {
         message: "credential is invalid",
       });
     }
-  
+
     const payload = { id: userExist.id };
-		let token = null;
-		if (userExist.role === "Administrator") {
-      console.log('admin')
-			token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-				expiresIn: '24h',
-			});
-		} else {
-      console.log('customer')
-			token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-				expiresIn: '24h',
-			});
-		}
+    let token = null;
+    if (userExist.role === "Administrator") {
+      console.log("admin");
+      token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
+        expiresIn: "24h",
+      });
+    } else {
+      console.log("customer");
+      token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
+        expiresIn: "24h",
+      });
+    }
     res.status(200).send({
       status: "success...",
       data: {
@@ -133,7 +133,7 @@ exports.checkAuth = async (req, res) => {
   try {
     const id = req.user.id;
     const token = req.user;
-    console.log(req.user)
+    console.log(req.user);
 
     const dataUser = await user.findOne({
       where: {
@@ -149,7 +149,7 @@ exports.checkAuth = async (req, res) => {
         status: "failed",
       });
     }
-    
+
     res.send({
       status: "success",
       data: {
@@ -158,7 +158,7 @@ exports.checkAuth = async (req, res) => {
           fullname: dataUser.fullname,
           email: dataUser.email,
           role: dataUser.role,
-          token :token,
+          token: token,
         },
       },
     });
