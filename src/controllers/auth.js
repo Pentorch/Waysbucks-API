@@ -38,7 +38,7 @@ exports.register = async (req, res) => {
       fullname: req.body.fullname,
       email: req.body.email,
       password: hashedPassword,
-      role: "Administrator",
+      role: "Customer",
     });
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_PRIVATE_KEY);
