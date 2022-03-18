@@ -1,15 +1,22 @@
 const { product } = require("../../models");
+const cloudinary = require("../utils/cloudinary");
 
-exports.addPrduct = async (req, res) => {
-   try {
+exports.addProduct = async (req, res) => {
+  try {
     const { body } = req;
     const userId = req.user.id;
-    console.log("body",body);
+    console.log("body", body);
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "uploads",
+      use_filename: true,
+      unique_filename: true,
+    });
 
     const newProduct = await product.create({
       ...body,
       idUser: userId,
-      image: req.file.filename,
+      image: result.public_id,
     });
 
     res.send({
@@ -26,15 +33,15 @@ exports.addPrduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const path = process.env.PATH_FILE
- 
+    const path = process.env.PATH_FILE;
+
     const products = await product.findAll({
       attributes: {
         exclude: ["idUser", "createdAt", "updatedAt"],
       },
     });
 
-   let data = JSON.parse(JSON.stringify(products));
+    let data = JSON.parse(JSON.stringify(products));
 
     data = data.map((item) => {
       return { ...item, image: path + item.image };
@@ -45,7 +52,7 @@ exports.getProducts = async (req, res) => {
       data: { data },
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed get resources",
     });
@@ -53,7 +60,7 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.getProduct = async (req, res) => {
-  const path = process.env.PATH_FILE
+  const path = process.env.PATH_FILE;
   const { id } = req.params;
   try {
     let products = await product.findOne({
@@ -66,7 +73,7 @@ exports.getProduct = async (req, res) => {
     });
 
     products = JSON.parse(JSON.stringify(products));
-    
+
     res.send({
       status: "success",
       data: {
@@ -75,7 +82,7 @@ exports.getProduct = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
     });
@@ -85,8 +92,7 @@ exports.getProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    
+
     await product.update(req.body, {
       where: {
         id,

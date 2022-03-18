@@ -14,7 +14,7 @@ const {
   getProfile,
 } = require("../controllers/user");
 const {
-  addPrduct,
+  addProduct,
   getProducts,
   getProduct,
   updateProduct,
@@ -46,7 +46,7 @@ router.get("/profile", auth, getProfile);
 router.delete("/user/:id", deleteUser);
 router.get("/check-auth", auth, checkAuth);
 
-router.post("/product", authAdmin, uploadFile("image"), addPrduct);
+router.post("/product", authAdmin, uploadFile("image"), addProduct);
 router.get("/products", getProducts);
 router.get("/product/:id", getProduct);
 router.put("/product/:id", authAdmin, updateProduct);
