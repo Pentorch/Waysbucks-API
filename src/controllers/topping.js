@@ -2,18 +2,23 @@ const { topping } = require("../../models");
 
 exports.addTopping = async (req, res) => {
   try {
-    const {body} = req;
-		const idUser = req.user.id;
-    
+    const { body } = req;
+    const idUser = req.user.id;
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "uploads",
+      use_filename: true,
+      unique_filename: true,
+    });
+
     const newTopping = await topping.create({
       ...body,
       idUser: idUser,
-      image: req.file.filename,
+      image: result.public_id,
     });
 
     res.send({
       status: "success",
-      data : {newTopping}
+      data: { newTopping },
     });
   } catch (error) {
     res.status(500).send({
@@ -23,8 +28,8 @@ exports.addTopping = async (req, res) => {
 };
 
 exports.getToppings = async (req, res) => {
-  const path = process.env.PATH_FILE
-  try { 
+  const path = process.env.PATH_FILE;
+  try {
     const toppings = await topping.findAll({
       attributes: {
         exclude: ["idUser", "createdAt", "updatedAt"],
@@ -37,13 +42,12 @@ exports.getToppings = async (req, res) => {
       return { ...item, image: path + item.image };
     });
 
-
     res.send({
       status: "success",
       data: { data },
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed get resources",
     });
@@ -52,8 +56,8 @@ exports.getToppings = async (req, res) => {
 
 exports.getTopping = async (req, res) => {
   const { id } = req.params;
-  const path = process.env.PATH_FILE
- 
+  const path = process.env.PATH_FILE;
+
   try {
     let toppings = await topping.findOne({
       where: {
@@ -65,7 +69,6 @@ exports.getTopping = async (req, res) => {
     });
 
     toppings = JSON.parse(JSON.stringify(toppings));
-    
 
     res.send({
       status: "success",
@@ -77,7 +80,7 @@ exports.getTopping = async (req, res) => {
 
     res.send({
       status: "success",
-      data : {toppings},
+      data: { toppings },
     });
   } catch (error) {
     res.status(500).send({
@@ -106,8 +109,8 @@ exports.updateTopping = async (req, res) => {
     });
 
     res.send({
-      status: 'success',
-      data: {toppings},
+      status: "success",
+      data: { toppings },
     });
   } catch (error) {
     console.log(error);
