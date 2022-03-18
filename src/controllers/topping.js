@@ -4,6 +4,8 @@ exports.addTopping = async (req, res) => {
   try {
     const { body } = req;
     const idUser = req.user.id;
+    console.log("body", body);
+
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: "uploads",
       use_filename: true,
