@@ -1,4 +1,5 @@
 const { user } = require("../../models");
+const cloudinary = require("../utils/cloudinary");
 
 exports.addUsers = async (req, res) => {
   try {
@@ -55,15 +56,20 @@ exports.getUser = async (req, res) => {
   }
 };
 
-
 exports.updateUser = async (req, res) => {
   try {
     const { body } = req;
     const id = req.user.id;
 
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "uploads",
+      use_filename: true,
+      unique_filename: true,
+    });
+
     const newUser = {
       ...body,
-      image: req.file.filename,
+      image: result.public_id,
     };
     await user.update(newUser, {
       where: {
