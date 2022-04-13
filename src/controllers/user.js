@@ -121,7 +121,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 exports.getProfile = async (req, res) => {
-  const path = process.env.PATH_FILE;
   const { id } = req.user;
   try {
     const users = await user.findOne({
@@ -133,15 +132,9 @@ exports.getProfile = async (req, res) => {
       },
     });
 
-    let data = JSON.parse(JSON.stringify(users));
-
-    data = data.map((item) => {
-      return { ...item, image: path + item.image };
-    });
-
-    res.send({
+    res.status(200).send({
       status: "success",
-      data: { data },
+      data: { users },
     });
   } catch (error) {
     res.status(500).send({
