@@ -16,22 +16,15 @@ exports.addUsers = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const path = process.env.PATH_FILE;
     const users = await user.findAll({
       attributes: {
         exclude: ["password", "createdAt", "updatedAt"],
       },
     });
 
-    let data = JSON.parse(JSON.stringify(users));
-
-    data = data.map((item) => {
-      return { ...item, image: path + item.image };
-    });
-
     res.send({
       status: "success",
-      data: { data },
+      data: { users },
     });
   } catch (error) {
     res.status(500).send({
@@ -41,10 +34,9 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  const path = process.env.PATH_FILE;
   const { id } = req.params;
   try {
-    let users = await user.findOne({
+    const users = await user.findOne({
       where: {
         id,
       },
@@ -53,14 +45,9 @@ exports.getUser = async (req, res) => {
       },
     });
 
-    users = JSON.parse(JSON.stringify(users));
-
     res.send({
       status: "success",
-      data: {
-        ...users,
-        image: path + users.image,
-      },
+      data: { users },
     });
   } catch (error) {
     res.status(500).send({
