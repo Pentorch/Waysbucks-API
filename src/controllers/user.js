@@ -1,30 +1,24 @@
 const { user } = require("../../models");
 const cloudinary = require("../utils/cloudinary");
 
-exports.addUsers = async (req, res) => {
-  try {
-    await user.create(req.body);
-    res.send({
-      status: "success",
-    });
-  } catch (error) {
-    res.status(500).send({
-      status: "failed",
-    });
-  }
-};
-
 exports.getUsers = async (req, res) => {
   try {
+    const path = process.env.PATH_FILE;
     const users = await user.findAll({
       attributes: {
         exclude: ["password", "createdAt", "updatedAt"],
       },
     });
 
+    let data = JSON.parse(JSON.stringify(users));
+
+    data = data.map((item) => {
+      return { ...item, image: path + item.image };
+    });
+
     res.send({
       status: "success",
-      data: { users },
+      data: { data },
     });
   } catch (error) {
     res.status(500).send({
@@ -45,9 +39,14 @@ exports.getUser = async (req, res) => {
       },
     });
 
+    let data = JSON.parse(JSON.stringify(users));
+
+    data = data.map((item) => {
+      return { ...item, image: path + item.image };
+    });
     res.send({
       status: "success",
-      data: { users },
+      data: { data },
     });
   } catch (error) {
     res.status(500).send({
@@ -69,11 +68,13 @@ exports.updateUser = async (req, res) => {
 
     const newUser = {
       ...body,
+      id,
       image: result.public_id,
     };
     await user.update(newUser, {
       where: {
         id,
+        image: result.public_id,
       },
     });
 
@@ -115,7 +116,6 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.send({
-      status: "failed",
       status: "Server Error",
     });
   }

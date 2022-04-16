@@ -49,7 +49,7 @@ router.get("/check-auth", auth, checkAuth);
 router.post("/product", authAdmin, uploadFile("image"), addProduct);
 router.get("/products", getProducts);
 router.get("/product/:id", getProduct);
-router.put("/product/:id", authAdmin, updateProduct);
+router.patch("/product/:id", authAdmin, uploadFile("image"), updateProduct);
 router.delete("/product/:id", authAdmin, deleteProduct);
 
 router.post("/topping", authAdmin, uploadFile("image"), addTopping);
