@@ -26,12 +26,37 @@ exports.getUsers = async (req, res) => {
     });
   }
 };
+exports.getUsers = async (req, res) => {
+  try {
+    const path = process.env.PATH_FILE;
+    const users = await user.findAll({
+      attributes: {
+        exclude: ["password", "createdAt", "updatedAt"],
+      },
+    });
+
+    let data = JSON.parse(JSON.stringify(users));
+
+    data = data.map((item) => {
+      return { ...item, image: path + item.image };
+    });
+
+    res.send({
+      status: "success",
+      data: { data },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "failed get resources",
+    });
+  }
+};
 
 exports.getUser = async (req, res) => {
-     const path = process.env.PATH_FILE;
+  const path = process.env.PATH_FILE;
   const { id } = req.params;
   try {
-    const users = await user.findOne({
+    const users = await user.findAll({
       where: {
         id,
       },
