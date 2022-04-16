@@ -28,6 +28,7 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
+     const path = process.env.PATH_FILE;
   const { id } = req.params;
   try {
     const users = await user.findOne({
