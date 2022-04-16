@@ -100,7 +100,6 @@ exports.updateUser = async (req, res) => {
     await user.update(newUser, {
       where: {
         id,
-        image: result.public_id,
       },
     });
 
